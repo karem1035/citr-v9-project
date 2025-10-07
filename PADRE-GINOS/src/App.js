@@ -6,6 +6,7 @@ const Pizza = (props) => {
 };
 
 const App = () => {
+  debugger;
   return React.createElement(
     "div",
     {},

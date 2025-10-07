@@ -1,0 +1,12 @@
+{
+  "name": "padre-ginos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "format": "prettier --write \"./**/*.{js,jsx,ts,tsx, css, scss, json, html}\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

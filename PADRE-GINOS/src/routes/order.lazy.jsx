@@ -4,7 +4,7 @@ import Cart from "../Cart";
 import Pizza from "../Pizza";
 import { CartContext } from "../contexts";
 
-export const Route = createLazyFileRoute("/order", {
+export const Route = createLazyFileRoute("/order")({
   component: Order,
 });
 

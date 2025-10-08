@@ -23,9 +23,7 @@ export default function Order() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        cart,
-      }),
+      body: JSON.stringify(cart),
     });
 
     setCart([]);

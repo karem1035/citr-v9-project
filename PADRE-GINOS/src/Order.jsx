@@ -1,45 +1,47 @@
 import { useState, useEffect } from "react";
 import Pizza from "./Pizza";
 
-const intel = new Intl.NumberFormat("en-US", {
+// feel free to change en-US / USD to your locale
+const intl = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
 
 export default function Order() {
-  const [pizzaTypes, setPizzaTypes] = useState([]);
   const [pizzaType, setPizzaType] = useState("pepperoni");
   const [pizzaSize, setPizzaSize] = useState("M");
+  const [pizzaTypes, setPizzaTypes] = useState([]);
   const [loading, setLoading] = useState(true);
 
   let price, selectedPizza;
-
   if (!loading) {
     selectedPizza = pizzaTypes.find((pizza) => pizzaType === pizza.id);
-  }
-
-  async function fetchPizzaTypes() {
-    const pizzaRes = await fetch("/api/pizzas");
-    const pizzaJson = await pizzaRes.json();
-    setPizzaTypes(pizzaJson);
-    setLoading(false);
+    price = intl.format(
+      selectedPizza.sizes ? selectedPizza.sizes[pizzaSize] : ""
+    );
   }
 
   useEffect(() => {
     fetchPizzaTypes();
   }, []);
 
+  async function fetchPizzaTypes() {
+    const pizzasRes = await fetch("/api/pizzas");
+    const pizzasJson = await pizzasRes.json();
+    setPizzaTypes(pizzasJson);
+    setLoading(false);
+  }
+
   return (
     <div className="order">
       <h2>Create Order</h2>
-      <form action="">
+      <form>
         <div>
           <div>
             <label htmlFor="pizza-type">Pizza Type</label>
             <select
               onChange={(e) => setPizzaType(e.target.value)}
               name="pizza-type"
-              id="pizza-type"
               value={pizzaType}
             >
               {pizzaTypes.map((pizza) => (
@@ -49,38 +51,39 @@ export default function Order() {
               ))}
             </select>
           </div>
-          <div onChange={(e) => setPizzaSize(e.target.value)}>
-            <label htmlFor="pizza-size">Pizza size</label>
+          <div>
+            <label htmlFor="pizza-size">Pizza Size</label>
             <div>
               <span>
                 <input
+                  onChange={(e) => setPizzaSize(e.target.value)}
+                  checked={pizzaSize === "S"}
                   type="radio"
                   name="pizza-size"
-                  id="pizza-s"
                   value="S"
-                  checked={pizzaSize === "S"}
+                  id="pizza-s"
                 />
                 <label htmlFor="pizza-s">Small</label>
               </span>
-
               <span>
                 <input
+                  onChange={(e) => setPizzaSize(e.target.value)}
+                  checked={pizzaSize === "M"}
                   type="radio"
                   name="pizza-size"
-                  id="pizza-m"
                   value="M"
-                  checked={pizzaSize === "M"}
+                  id="pizza-m"
                 />
                 <label htmlFor="pizza-m">Medium</label>
               </span>
-
               <span>
                 <input
+                  onChange={(e) => setPizzaSize(e.target.value)}
+                  checked={pizzaSize === "L"}
                   type="radio"
                   name="pizza-size"
-                  id="pizza-l"
                   value="L"
-                  checked={pizzaSize === "L"}
+                  id="pizza-l"
                 />
                 <label htmlFor="pizza-l">Large</label>
               </span>
@@ -88,15 +91,19 @@ export default function Order() {
           </div>
           <button type="submit">Add to Cart</button>
         </div>
+        {loading ? (
+          <h3>LOADING …</h3>
+        ) : (
+          <div className="order-pizza">
+            <Pizza
+              name={selectedPizza.name}
+              description={selectedPizza.description}
+              image={selectedPizza.image}
+            />
+            <p>{price}</p>
+          </div>
+        )}
       </form>
-      <div className="order-pizza">
-        <Pizza
-          name="pepperoni"
-          description="Tomato sauce, mozzarella, basil"
-          image="/public/pizzas/pepperoni.webp"
-        />
-        <p>13.99$</p>
-      </div>
     </div>
   );
 }

@@ -1,8 +1,33 @@
+import { useState, useEffect } from "react";
 import Pizza from "./Pizza";
 
+const intel = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
+
 export default function Order() {
-  const pizzaType = "pepperoni";
-  const pizzaSize = "M";
+  const [pizzaTypes, setPizzaTypes] = useState([]);
+  const [pizzaType, setPizzaType] = useState("pepperoni");
+  const [pizzaSize, setPizzaSize] = useState("M");
+  const [loading, setLoading] = useState(true);
+
+  let price, selectedPizza;
+
+  if (!loading) {
+    selectedPizza = pizzaTypes.find((pizza) => pizzaType === pizza.id);
+  }
+
+  async function fetchPizzaTypes() {
+    const pizzaRes = await fetch("/api/pizzas");
+    const pizzaJson = await pizzaRes.json();
+    setPizzaTypes(pizzaJson);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchPizzaTypes();
+  }, []);
 
   return (
     <div className="order">
@@ -11,13 +36,20 @@ export default function Order() {
         <div>
           <div>
             <label htmlFor="pizza-type">Pizza Type</label>
-            <select name="pizza-type" id="pizza-type" value={pizzaType}>
-              <option value="pepperoni">The Pepperoni Pizza</option>
-              <option value="hawaiian">The Hawaiian Pizza</option>
-              <option value="big_meat">The Big Meat Pizza</option>
+            <select
+              onChange={(e) => setPizzaType(e.target.value)}
+              name="pizza-type"
+              id="pizza-type"
+              value={pizzaType}
+            >
+              {pizzaTypes.map((pizza) => (
+                <option key={pizza.id} value={pizza.id}>
+                  {pizza.name}
+                </option>
+              ))}
             </select>
           </div>
-          <div>
+          <div onChange={(e) => setPizzaSize(e.target.value)}>
             <label htmlFor="pizza-size">Pizza size</label>
             <div>
               <span>
@@ -35,22 +67,22 @@ export default function Order() {
                 <input
                   type="radio"
                   name="pizza-size"
-                  id="pizza-s"
+                  id="pizza-m"
                   value="M"
                   checked={pizzaSize === "M"}
                 />
-                <label htmlFor="pizza-s">Medium</label>
+                <label htmlFor="pizza-m">Medium</label>
               </span>
 
               <span>
                 <input
                   type="radio"
                   name="pizza-size"
-                  id="pizza-s"
+                  id="pizza-l"
                   value="L"
                   checked={pizzaSize === "L"}
                 />
-                <label htmlFor="pizza-s">Large</label>
+                <label htmlFor="pizza-l">Large</label>
               </span>
             </div>
           </div>

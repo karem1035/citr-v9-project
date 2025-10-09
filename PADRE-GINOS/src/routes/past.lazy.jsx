@@ -83,10 +83,10 @@ function PastOrdersRoute() {
                 </tr>
               </thead>
               <tbody>
-                {pastOrderData.orderItems.map((pizza) => {
+                {pastOrderData?.orderItems.map((pizza) => (
                   <tr key={`${pizza.pizzaTypeId}..${pizza.size}`}>
                     <td>
-                      <img src={pizza.img} alt={pizza.name} />
+                      <img src={pizza.image} alt={pizza.name} />
                     </td>
 
                     <td>{pizza.name}</td>
@@ -94,8 +94,8 @@ function PastOrdersRoute() {
                     <td>{pizza.quantity}</td>
                     <td>{priceConverter(pizza.price)}</td>
                     <td>{priceConverter(pizza.total)}</td>
-                  </tr>;
-                })}
+                  </tr>
+                ))}
               </tbody>
             </table>
           ) : (

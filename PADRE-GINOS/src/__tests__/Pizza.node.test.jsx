@@ -1,14 +1,14 @@
 import { render, cleanup } from "@testing-library/react";
-import { expect, test, afterEach } from "vitest";
+import { afterEach, expect, test } from "vitest";
 import Pizza from "../Pizza";
 
 afterEach(cleanup);
 
-test("alt text renders on Pizza image", async () => {
+test("alt text renders on image", async () => {
   const name = "My Favorite Pizza";
-  const src = "https://picsum.photos/200/300";
+  const src = "https://picsum.photos/200";
   const screen = render(
-    <Pizza name={name} description="Description" image={src} />,
+    <Pizza name={name} description="super cool pizza" image={src} />,
   );
 
   const img = screen.getByRole("img");
@@ -16,9 +16,9 @@ test("alt text renders on Pizza image", async () => {
   expect(img.alt).toBe(name);
 });
 
-test("to have a default image if none is provided", async () => {
+test("to have default image if none is provided", async () => {
   const screen = render(
-    <Pizza name="My Favorite Pizza" description="Description" />,
+    <Pizza name={"Cool Pizza"} description="super cool pizza" />,
   );
 
   const img = screen.getByRole("img");

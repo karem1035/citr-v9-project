@@ -10,24 +10,23 @@ const testPizza = {
   id: "calabrese",
   name: "The Calabrese Pizza",
   category: "Supreme",
-  description: "lol pizza from Calabria",
+  description:
+    "Salami, Pancetta, Tomatoes, Red Onions, Friggitello Peppers, Garlic",
   image: "/public/pizzas/calabrese.webp",
-  size: { S: 12.25, M: 16.25, L: 20.25 },
+  sizes: { S: 12.25, M: 16.25, L: 20.25 },
 };
 
-test("gives null when first called", async () => {
+test("to be null on initial load", async () => {
   fetch.mockResponseOnce(JSON.stringify(testPizza));
-  const { result } = renderHook(() => usePizzaOfTheDay());
-  expect(result.current).toBe(null);
+  const { result } = renderHook(() => usePizzaOfTheDay(""));
+  expect(result.current).toBeNull();
 });
 
 test("to call the API and give back the pizza of the day", async () => {
   fetch.mockResponseOnce(JSON.stringify(testPizza));
-  const { result } = renderHook(() => usePizzaOfTheDay());
-
+  const { result } = renderHook(() => usePizzaOfTheDay(""));
   await waitFor(() => {
     expect(result.current).toEqual(testPizza);
   });
-
   expect(fetchMocker).toBeCalledWith("/api/pizza-of-the-day");
 });

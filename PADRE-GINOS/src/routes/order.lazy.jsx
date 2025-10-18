@@ -1,18 +1,19 @@
 import { useState, useEffect, useContext } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
+import { CartContext } from "../contexts";
 import Cart from "../Cart";
 import Pizza from "../Pizza";
-import { CartContext } from "../contexts";
-
-export const Route = createLazyFileRoute("/order")({
-  component: Order,
-});
 
 // feel free to change en-US / USD to your locale
 const intl = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
+
+export const Route = createLazyFileRoute("/order")({
+  component: Order,
+});
+
 function Order() {
   const [pizzaType, setPizzaType] = useState("pepperoni");
   const [pizzaSize, setPizzaSize] = useState("M");
@@ -28,7 +29,9 @@ function Order() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(cart),
+      body: JSON.stringify({
+        cart,
+      }),
     });
 
     setCart([]);
@@ -54,19 +57,15 @@ function Order() {
     setLoading(false);
   }
 
+  function addToCart() {
+    setCart([...cart, { pizza: selectedPizza, size: pizzaSize, price }]);
+  }
+
   return (
     <div className="order-page">
       <div className="order">
         <h2>Create Order</h2>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setCart([
-              ...cart,
-              { pizza: selectedPizza, size: pizzaSize, price },
-            ]);
-          }}
-        >
+        <form action={addToCart}>
           <div>
             <div>
               <label htmlFor="pizza-type">Pizza Type</label>

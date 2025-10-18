@@ -4,45 +4,48 @@ import { createLazyFileRoute } from "@tanstack/react-router";
 import getPastOrders from "../api/getPastOrders";
 import getPastOrder from "../api/getPastOrder";
 import Modal from "../Modal";
-import { priceConverter } from "../useCurrency";
 import ErrorBoundary from "../ErrorBoundary";
 
 export const Route = createLazyFileRoute("/past")({
-  component: ErrorBoundaryWrappedPastOrderRoute,
+  component: ErrorBoundaryWrappedPastOrderRoutes,
 });
 
-function ErrorBoundaryWrappedPastOrderRoute(props) {
+const intl = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
+
+function ErrorBoundaryWrappedPastOrderRoutes() {
   return (
     <ErrorBoundary>
-      <PastOrdersRoute {...props} />
+      <PastOrdersRoute />
     </ErrorBoundary>
   );
 }
 
 function PastOrdersRoute() {
   const [page, setPage] = useState(1);
-  const [focusedOrder, setFocusedOrder] = useState(null);
+  const [focusedOrder, setFocusedOrder] = useState();
   const { isLoading, data } = useQuery({
     queryKey: ["past-orders", page],
     queryFn: () => getPastOrders(page),
-    staleTime: 3000,
+    staleTime: 30000,
   });
 
   const { isLoading: isLoadingPastOrder, data: pastOrderData } = useQuery({
     queryKey: ["past-order", focusedOrder],
     queryFn: () => getPastOrder(focusedOrder),
-    staleTime: 86400000,
     enabled: !!focusedOrder,
+    staleTime: 24 * 60 * 60 * 1000, // one day in milliseconds,
   });
 
   if (isLoading) {
     return (
       <div className="past-orders">
-        <h2>LOADING ...</h2>
+        <h2>LOADING …</h2>
       </div>
     );
   }
-
   return (
     <div className="past-orders">
       <table>
@@ -78,7 +81,7 @@ function PastOrdersRoute() {
       </div>
       {focusedOrder ? (
         <Modal>
-          <h2>Order #:{focusedOrder}</h2>
+          <h2>Order #{focusedOrder}</h2>
           {!isLoadingPastOrder ? (
             <table>
               <thead>
@@ -92,25 +95,24 @@ function PastOrdersRoute() {
                 </tr>
               </thead>
               <tbody>
-                {pastOrderData?.orderItems.map((pizza) => (
-                  <tr key={`${pizza.pizzaTypeId}..${pizza.size}`}>
+                {pastOrderData.orderItems.map((pizza) => (
+                  <tr key={`${pizza.pizzaTypeId}_${pizza.size}`}>
                     <td>
                       <img src={pizza.image} alt={pizza.name} />
                     </td>
-
                     <td>{pizza.name}</td>
                     <td>{pizza.size}</td>
                     <td>{pizza.quantity}</td>
-                    <td>{priceConverter(pizza.price)}</td>
-                    <td>{priceConverter(pizza.total)}</td>
+                    <td>{intl.format(pizza.price)}</td>
+                    <td>{intl.format(pizza.total)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           ) : (
-            <p>Loading ...</p>
+            <p>Loading …</p>
           )}
-          <button onClick={() => setFocusedOrder(null)}>Close</button>
+          <button onClick={() => setFocusedOrder()}>Close</button>
         </Modal>
       ) : null}
     </div>

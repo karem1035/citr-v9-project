@@ -9,7 +9,6 @@ import { CartContext } from "../contexts";
 export const Route = createRootRoute({
   component: () => {
     const cartHook = useState([]);
-
     return (
       <>
         <CartContext.Provider value={cartHook}>

@@ -4,13 +4,15 @@ import prettier from "eslint-config-prettier";
 import reactPlugin from "eslint-plugin-react";
 import pluginQuery from "@tanstack/eslint-plugin-query";
 
-/** @type {import("eslint").Linter.Config} */
+/** @type {import('eslint').Linter.Config[]} */
 export default [
   js.configs.recommended,
   {
     ...reactPlugin.configs.flat.recommended,
     settings: {
-      react: { version: "detect" },
+      react: {
+        version: "detect",
+      },
     },
   },
   reactPlugin.configs.flat["jsx-runtime"],
@@ -18,7 +20,7 @@ export default [
   {
     files: ["**/*.js", "**/*.jsx"],
     languageOptions: {
-      globals: { ...globals.node, ...globals.browser },
+      globals: { ...globals.browser, ...globals.node },
       parserOptions: {
         ecmaFeatures: {
           jsx: true,

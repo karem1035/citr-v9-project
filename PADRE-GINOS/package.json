@@ -10,6 +10,7 @@
     "format": "prettier --write \"./**/*.{js,jsx,ts,tsx, css, scss, json, html}\"",
     "lint": "eslint",
     "test": "vitest",
+    "test:ui": "vitest --ui",
     "coverage": "vitest --coverage"
   },
   "author": "",
